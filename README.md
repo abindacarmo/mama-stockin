@@ -32,7 +32,6 @@ This project also serves as a hands-on learning exercise for me — a chance to 
 - **Backend:** Django
 - **Frontend:** Tailwind CSS (mobile-first layout)
 - **Database:** PostgreSQL
-<!-- - **Hosting:** PythonAnywhere (free tier) -->
 
 ## Data Model Overview
 
