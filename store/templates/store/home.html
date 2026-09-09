@@ -1,0 +1,39 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Home - MamaStockin{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="text-center py-2">
+        <h2 class="text-lg font-bold text-gray-800">Main Menu</h2>
+        <p class="text-xs text-gray-500">Select a menu to start</p>
+    </div>
+
+    <!-- Menu Buttons Grid -->
+    <div class="grid grid-cols-2 gap-4">
+        <!-- Categories -->
+        <a href="{% url 'category_list' %}" class="bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+            <span class="text-2xl mb-1">📂</span>
+            <span class="font-semibold text-indigo-700 text-sm">Categories</span>
+        </a>
+
+        <!-- Products -->
+        <a href="{% url 'product_list' %}" class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+            <span class="text-2xl mb-1">📦</span>
+            <span class="font-semibold text-emerald-700 text-sm">Products</span>
+        </a>
+
+        <!-- Transactions -->
+        <a href="{% url 'transaction_list' %}" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+            <span class="text-2xl mb-1">💰</span>
+            <span class="font-semibold text-amber-700 text-sm">Transactions</span>
+        </a>
+
+        <!-- Expenses -->
+        <a href="{% url 'expense_list' %}" class="bg-rose-50 hover:bg-rose-100 border border-rose-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+            <span class="text-2xl mb-1">📝</span>
+            <span class="font-semibold text-rose-700 text-sm">Expenses</span>
+        </a>
+    </div>
+</div>
+{% endblock %}
