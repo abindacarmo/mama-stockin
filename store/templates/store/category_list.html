@@ -1,0 +1,25 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Categories - MamaStockin{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h2 class="text-lg font-bold text-gray-800">Categories</h2>
+        <a href="{% url 'store_home' %}" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition">Back to Home</a>
+    </div>
+
+    <!-- Categories List -->
+    <ul class="space-y-2">
+        {% for category in categories %}
+            <li class="bg-gray-50 border border-gray-200 p-3 rounded-lg flex justify-between items-center shadow-sm">
+                <span class="font-medium text-gray-800">{{ category.name }}</span>
+            </li>
+        {% empty %}
+            <li class="text-gray-500 text-center py-6 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-sm">
+                No categories found.
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
