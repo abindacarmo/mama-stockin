@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environment
+envi/
+env/
+venv/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# Node / Tailwind (inside theme app)
+node_modules/
+theme/static_src/node_modules/
+theme/static/css/dist/*.css
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Migrations (optional — uncomment if you don't want to track them)
+# */migrations/*.py
+# !*/migrations/__init__.py
