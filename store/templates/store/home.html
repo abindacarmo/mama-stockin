@@ -35,5 +35,50 @@
             <span class="font-semibold text-rose-700 text-sm">Expenses</span>
         </a>
     </div>
+
+    <!-- Dashboard Chart Section (Frontend Only) -->
+    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-3 shadow-sm">
+        <h3 class="text-sm font-semibold text-gray-700 text-center">Weekly Sales Overview</h3>
+        
+        <!-- Simple Bar Chart Placeholder using Tailwind CSS -->
+        <div class="flex justify-around items-end h-32 pt-4 border-b border-gray-200">
+            <!-- Mon -->
+            <div class="flex flex-col items-center space-y-1">
+                <div class="w-6 bg-pink-400 rounded-t h-16"></div>
+                <span class="text-[10px] text-gray-500">Mon</span>
+            </div>
+            <!-- Tue -->
+            <div class="flex flex-col items-center space-y-1">
+                <div class="w-6 bg-pink-400 rounded-t h-24"></div>
+                <span class="text-[10px] text-gray-500">Tue</span>
+            </div>
+            <!-- Wed -->
+            <div class="flex flex-col items-center space-y-1">
+                <div class="w-6 bg-pink-400 rounded-t h-12"></div>
+                <span class="text-[10px] text-gray-500">Wed</span>
+            </div>
+            <!-- Thu -->
+            <div class="flex flex-col items-center space-y-1">
+                <div class="w-6 bg-pink-400 rounded-t h-20"></div>
+                <span class="text-[10px] text-gray-500">Thu</span>
+            </div>
+            <!-- Fri -->
+            <div class="flex flex-col items-center space-y-1">
+                <div class="w-6 bg-pink-400 rounded-t h-28"></div>
+                <span class="text-[10px] text-gray-500">Fri</span>
+            </div>
+            <!-- Sat -->
+            <div class="flex flex-col items-center space-y-1">
+                <div class="w-6 bg-pink-400 rounded-t h-20"></div>
+                <span class="text-[10px] text-gray-500">Sat</span>
+            </div>
+            <!-- Sun -->
+            <div class="flex flex-col items-center space-y-1">
+                <div class="w-6 bg-pink-400 rounded-t h-8"></div>
+                <span class="text-[10px] text-gray-500">Sun</span>
+            </div>
+        </div>
+        <p class="text-[11px] text-gray-400 text-center">Dummy data chart (backend not connected yet)</p>
+    </div>
 </div>
 {% endblock %}
