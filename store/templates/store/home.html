@@ -40,40 +40,44 @@
     <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-4 shadow-sm">
         <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Business Summary</h3>
         
-        <!-- Summary Table -->
+        <!-- Summary Table with Capital & Revenue -->
         <div class="overflow-x-auto">
             <table class="w-full text-xs text-left text-gray-700">
                 <thead class="bg-gray-100 text-gray-800 uppercase">
                     <tr>
-                        <th class="py-2 px-3">Period</th>
-                        <th class="py-2 px-3 text-emerald-600">Income</th>
-                        <th class="py-2 px-3 text-rose-600">Expense</th>
-                        <th class="py-2 px-3 text-pink-600">Net Profit</th>
+                        <th class="py-2 px-2">Period</th>
+                        <th class="py-2 px-2 text-blue-600">Capital</th>
+                        <th class="py-2 px-2 text-emerald-600">Revenue</th>
+                        <th class="py-2 px-2 text-rose-600">Expense</th>
+                        <th class="py-2 px-2 text-pink-600">Profit</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     <tr>
-                        <td class="py-2.5 px-3 font-medium">This Week</td>
-                        <td class="py-2.5 px-3 text-emerald-600 font-semibold">$150.00</td>
-                        <td class="py-2.5 px-3 text-rose-600">$20.00</td>
-                        <td class="py-2.5 px-3 text-pink-600 font-bold">$130.00</td>
+                        <td class="py-2.5 px-2 font-medium">This Week</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">$100.00</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">$150.00</td>
+                        <td class="py-2.5 px-2 text-rose-600">$20.00</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">$30.00</td>
                     </tr>
                     <tr>
-                        <td class="py-2.5 px-3 font-medium">This Month</td>
-                        <td class="py-2.5 px-3 text-emerald-600 font-semibold">$600.00</td>
-                        <td class="py-2.5 px-3 text-rose-600">$85.00</td>
-                        <td class="py-2.5 px-3 text-pink-600 font-bold">$515.00</td>
+                        <td class="py-2.5 px-2 font-medium">This Month</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">$400.00</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">$600.00</td>
+                        <td class="py-2.5 px-2 text-rose-600">$85.00</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">$115.00</td>
                     </tr>
                     <tr>
-                        <td class="py-2.5 px-3 font-medium">This Year</td>
-                        <td class="py-2.5 px-3 text-emerald-600 font-semibold">$7,200.00</td>
-                        <td class="py-2.5 px-3 text-rose-600">$950.00</td>
-                        <td class="py-2.5 px-3 text-pink-600 font-bold">$6,250.00</td>
+                        <td class="py-2.5 px-2 font-medium">This Year</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">$5,000.00</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">$7,200.00</td>
+                        <td class="py-2.5 px-2 text-rose-600">$950.00</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">$1,250.00</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <p class="text-[11px] text-gray-400 text-center italic">Note: The table above shows summary data for easy tracking.</p>
+        <p class="text-[11px] text-gray-400 text-center italic">Note: Capital, Revenue, Expense, and Profit tracked per period.</p>
     </div>
 </div>
 {% endblock %}
