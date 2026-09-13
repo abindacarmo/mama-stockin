@@ -9,26 +9,33 @@
         <a href="{% url 'store_home' %}" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition">Back to Home</a>
     </div>
 
-    <!-- Transaction Form Placeholder -->
-    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-3">
-        <h3 class="text-sm font-semibold text-gray-700">Record Transaction (Frontend Only)</h3>
-        <select class="w-full text-sm border border-gray-300 rounded-lg p-2.5 bg-white text-gray-500">
-            <option>Select Product</option>
-        </select>
-        <input type="number" placeholder="Quantity sold" class="w-full text-sm border border-gray-300 rounded-lg p-2.5 bg-white">
-        <button class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">Record Sale</button>
+    <!-- Transaction Form -->
+    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-3 shadow-sm">
+        <h3 class="text-sm font-semibold text-gray-700">Record Sale</h3>
+        <form method="POST" class="space-y-3">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Select Product</label>
+                <select name="product_id" required class="w-full text-sm border border-gray-300 rounded-lg p-2.5 bg-white text-gray-700">
+                    <option value="">-- Choose Product --</option>
+                    {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.name }} (Stock: {{ product.stock }}) - ${{ product.selling_price }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Quantity</label>
+                <input type="number" name="quantity" min="1" value="1" required class="w-full text-sm border border-gray-300 rounded-lg p-2.5 bg-white">
+            </div>
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-lg text-sm transition shadow-sm">Record Sale</button>
+        </form>
     </div>
 
     <!-- Transaction History -->
     <div class="space-y-2">
-        <div class="bg-white border border-gray-200 p-3 rounded-lg flex justify-between items-center shadow-sm">
-            <div>
-                <h4 class="font-semibold text-gray-800 text-sm">Pulsa Telemor 10k</h4>
-                <p class="text-xs text-gray-500">Qty: 3 | Date: Today</p>
-            </div>
-            <div class="text-right">
-                <span class="text-sm font-bold text-amber-600">$3.00</span>
-            </div>
+        <h3 class="text-sm font-semibold text-gray-700">Recent Sales</h3>
+        <div class="text-gray-500 text-center py-6 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-sm">
+            No transactions recorded yet.
         </div>
     </div>
 </div>
