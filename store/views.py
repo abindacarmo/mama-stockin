@@ -6,13 +6,13 @@ def home(request):
 
 def category_list(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
+        name = request.POST.get('name_category') # foti husi attribute name="name_category" iha tag <input> nia laran(no nia fundsaun atu foti value ne'ebe prense husi user)
         if name:
-            Category.objects.create(name=name)
+            Category.objects.create(name=name) #name kor matak ne koluna husi tabela Category(nia funsaun atu halo lina foun iha tabela category)
             return redirect('category_list')
 
-    categories = Category.objects.all()
-    return render(request, 'store/category_list.html', {'categories': categories})
+    categories = Category.objects.all() #foti dados sira iha database hodi fo sai fali iha template
+    return render(request, 'store/category_list.html', {'categories': categories}) # template labele haree variable python(ne mak key) tamba ne utiliza contex dictionary
 
 def product_list(request):
     if request.method == 'POST':
