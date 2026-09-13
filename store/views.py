@@ -38,7 +38,8 @@ def product_list(request):
     return render(request, 'store/product_list.html', {'products': products, 'categories': categories})
 
 def transaction_list(request):
-    return render(request, 'store/transaction_list.html')
+    products = Product.objects.all()
+    return render(request, 'store/transaction_list.html', {'products': products})
 
 def expense_list(request):
     return render(request, 'store/expense_list.html')
