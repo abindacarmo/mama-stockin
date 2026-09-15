@@ -1,18 +1,18 @@
 from django.shortcuts import render, redirect
-from .models import Category, Product
+from .models import Category, Product, Transaction, Expense
 
 def home(request):
     return render(request, 'store/home.html')
 
 def category_list(request):
     if request.method == 'POST':
-        name = request.POST.get('name_category') # foti husi attribute name="name_category" iha tag <input> nia laran(no nia fundsaun atu foti value ne'ebe prense husi user)
+        name = request.POST.get('name')
         if name:
-            Category.objects.create(name=name) #name kor matak ne koluna husi tabela Category(nia funsaun atu halo lina foun iha tabela category)
+            Category.objects.create(name=name)
             return redirect('category_list')
 
-    categories = Category.objects.all() #foti dados sira iha database hodi fo sai fali iha template
-    return render(request, 'store/category_list.html', {'categories': categories}) # template labele haree variable python(ne mak key) tamba ne utiliza contex dictionary
+    categories = Category.objects.all()
+    return render(request, 'store/category_list.html', {'categories': categories})
 
 def product_list(request):
     if request.method == 'POST':
@@ -38,8 +38,33 @@ def product_list(request):
     return render(request, 'store/product_list.html', {'products': products, 'categories': categories})
 
 def transaction_list(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        quantity = request.POST.get('quantity')
+
+        if product_id and quantity:
+            product = Product.objects.get(id=product_id)
+            Transaction.objects.create(
+                product=product,
+                quantity=int(quantity)
+            )
+            return redirect('transaction_list')
+
     products = Product.objects.all()
-    return render(request, 'store/transaction_list.html', {'products': products})
+    transactions = Transaction.objects.all().order_by('-date')
+    return render(request, 'store/transaction_list.html', {'products': products, 'transactions': transactions})
 
 def expense_list(request):
-    return render(request, 'store/expense_list.html')
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        amount = request.POST.get('amount')
+
+        if description and amount:
+            Expense.objects.create(
+                description=description,
+                amount=amount
+            )
+            return redirect('expense_list')
+
+    expenses = Expense.objects.all().order_by('-date')
+    return render(request, 'store/expense_list.html', {'expenses': expenses})

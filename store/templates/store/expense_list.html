@@ -3,31 +3,47 @@
 {% block title %}Expenses - MamaStockin{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div class="space-y-6">
     <div class="flex justify-between items-center">
         <h2 class="text-lg font-bold text-gray-800">Expenses</h2>
         <a href="{% url 'store_home' %}" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition">Back to Home</a>
     </div>
 
-    <!-- Expense Form Placeholder -->
-    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-3">
-        <h3 class="text-sm font-semibold text-gray-700">Add Expense (Frontend Only)</h3>
-        <input type="text" placeholder="Description (e.g. Transport)" class="w-full text-sm border border-gray-300 rounded-lg p-2.5 bg-white">
-        <input type="number" placeholder="Amount" class="w-full text-sm border border-gray-300 rounded-lg p-2.5 bg-white">
-        <button class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">Save Expense</button>
+    <!-- Expense Form -->
+    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-3 shadow-sm">
+        <h3 class="text-sm font-semibold text-gray-700">Add Expense</h3>
+        <form method="POST" class="space-y-3">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                <input type="text" name="description" required placeholder="e.g. Transport or packaging" class="w-full text-sm border border-gray-300 rounded-lg p-2 bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Amount</label>
+                <input type="number" step="0.01" name="amount" required placeholder="0.00" class="w-full text-sm border border-gray-300 rounded-lg p-2 bg-white">
+            </div>
+            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-lg text-sm transition shadow-sm">Save Expense</button>
+        </form>
     </div>
 
     <!-- Expense List -->
     <div class="space-y-2">
-        <div class="bg-white border border-gray-200 p-3 rounded-lg flex justify-between items-center shadow-sm">
-            <div>
-                <h4 class="font-semibold text-gray-800 text-sm">Transport to shop</h4>
-                <p class="text-xs text-gray-500">Date: Today</p>
+        <h3 class="text-sm font-semibold text-gray-700">Expense History</h3>
+        {% for exp in expenses %}
+            <div class="bg-white border border-gray-200 p-3 rounded-lg flex justify-between items-center shadow-sm">
+                <div>
+                    <h4 class="font-semibold text-gray-800 text-sm">{{ exp.description }}</h4>
+                    <p class="text-xs text-gray-500">Date: {{ exp.date }}</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm font-bold text-rose-600">${{ exp.amount }}</span>
+                </div>
             </div>
-            <div class="text-right">
-                <span class="text-sm font-bold text-rose-600">$5.00</span>
+        {% empty %}
+            <div class="text-gray-500 text-center py-6 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-sm">
+                No expenses recorded yet.
             </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
