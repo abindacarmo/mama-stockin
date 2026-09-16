@@ -1,8 +1,8 @@
-{% extends 'store/base.html' %} {% comment %} signifika uza layout husi store/base.html{% endcomment %}
+{% extends 'store/base.html' %}
 
 {% block title %}Home - MamaStockin{% endblock %}
 
-{% block content %} {% comment %} content sira ne'ebe atu pasang iha ku'ak ka fatin klaran ne'ebe iha layout ne'ebe iha file base.html {% endcomment %}
+{% block content %}
 <div class="space-y-6">
     <div class="text-center py-2">
         <h2 class="text-lg font-bold text-gray-800">Main Menu</h2>
@@ -36,11 +36,11 @@
         </a>
     </div>
 
-    <!-- Simple Business Summary (Frontend Only) -->
+    <!-- Dynamic Business Summary -->
     <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-4 shadow-sm">
         <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Business Summary</h3>
         
-        <!-- Summary Table with Capital & Revenue -->
+        <!-- Summary Table with Dynamic Data -->
         <div class="overflow-x-auto">
             <table class="w-full text-xs text-left text-gray-700">
                 <thead class="bg-gray-100 text-gray-800 uppercase">
@@ -53,31 +53,34 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
+                    <!-- This Week -->
                     <tr>
                         <td class="py-2.5 px-2 font-medium">This Week</td>
-                        <td class="py-2.5 px-2 text-blue-600 font-semibold">$100.00</td>
-                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">$150.00</td>
-                        <td class="py-2.5 px-2 text-rose-600">$20.00</td>
-                        <td class="py-2.5 px-2 text-pink-600 font-bold">$30.00</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ weekly_capital }}</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ weekly_revenue }}</td>
+                        <td class="py-2.5 px-2 text-rose-600">${{ weekly_expense }}</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ weekly_profit }}</td>
                     </tr>
+                    <!-- This Month -->
                     <tr>
                         <td class="py-2.5 px-2 font-medium">This Month</td>
-                        <td class="py-2.5 px-2 text-blue-600 font-semibold">$400.00</td>
-                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">$600.00</td>
-                        <td class="py-2.5 px-2 text-rose-600">$85.00</td>
-                        <td class="py-2.5 px-2 text-pink-600 font-bold">$115.00</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ monthly_capital }}</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ monthly_revenue }}</td>
+                        <td class="py-2.5 px-2 text-rose-600">${{ monthly_expense }}</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ monthly_profit }}</td>
                     </tr>
+                    <!-- This Year -->
                     <tr>
                         <td class="py-2.5 px-2 font-medium">This Year</td>
-                        <td class="py-2.5 px-2 text-blue-600 font-semibold">$5,000.00</td>
-                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">$7,200.00</td>
-                        <td class="py-2.5 px-2 text-rose-600">$950.00</td>
-                        <td class="py-2.5 px-2 text-pink-600 font-bold">$1,250.00</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ yearly_capital }}</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ yearly_revenue }}</td>
+                        <td class="py-2.5 px-2 text-rose-600">${{ yearly_expense }}</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ yearly_profit }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <p class="text-[11px] text-gray-400 text-center italic">Note: Capital, Revenue, Expense, and Profit tracked per period.</p>
+        <p class="text-[11px] text-gray-400 text-center italic">Note: Summary is calculated dynamically from real transactions and expenses.</p>
     </div>
 </div>
 {% endblock %}
