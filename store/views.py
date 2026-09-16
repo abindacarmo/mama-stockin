@@ -34,6 +34,9 @@ def home(request):
     yearly_expense = sum(exp.amount for exp in yearly_expenses) or 0
     yearly_profit = yearly_revenue - yearly_capital - yearly_expense
 
+    # Fetch products for stock indicator
+    products = Product.objects.all()
+
     context = {
         'weekly_capital': weekly_capital,
         'weekly_revenue': weekly_revenue,
@@ -49,13 +52,15 @@ def home(request):
         'yearly_revenue': yearly_revenue,
         'yearly_expense': yearly_expense,
         'yearly_profit': yearly_profit,
+
+        'products': products,
     }
 
     return render(request, 'store/home.html', context)
 
 def category_list(request):
     if request.method == 'POST':
-        name = request.POST.get('name_category')
+        name = request.POST.get('name')
         if name:
             Category.objects.create(name=name)
             return redirect('category_list')
