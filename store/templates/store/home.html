@@ -36,6 +36,28 @@
         </a>
     </div>
 
+    <!-- Quick Stock Status Section (Right above Business Summary) -->
+    <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-3 shadow-sm">
+        <div class="flex justify-between items-center border-b pb-2">
+            <h3 class="text-sm font-bold text-gray-800">📦 Quick Stock Status</h3>
+            <a href="{% url 'product_list' %}" class="text-xs text-pink-600 hover:underline font-medium">Manage Products</a>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            {% for product in products %}
+                <div class="bg-gray-50 border border-gray-100 p-2.5 rounded-lg flex justify-between items-center">
+                    <span class="text-xs font-medium text-gray-700 truncate max-w-[110px]">{{ product.name }}</span>
+                    <span class="text-xs font-bold {% if product.stock <= 5 %}text-rose-600{% else %}text-emerald-600{% endif %}">
+                        {{ product.stock }} left
+                    </span>
+                </div>
+            {% empty %}
+                <div class="col-span-2 text-center text-xs text-gray-400 py-2">
+                    No products added yet.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
     <!-- Dynamic Business Summary -->
     <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-4 shadow-sm">
         <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Business Summary</h3>
