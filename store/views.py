@@ -1,12 +1,61 @@
 from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.db.models import Sum
 from .models import Category, Product, Transaction, Expense
 
 def home(request):
-    return render(request, 'store/home.html')
+    today = timezone.now().date()
+    
+    # 1. Weekly Calculations (Last 7 days)
+    week_ago = today - timezone.timedelta(days=7)
+    weekly_transactions = Transaction.objects.filter(date__gte=week_ago)
+    weekly_expenses = Expense.objects.filter(date__gte=week_ago)
+    
+    weekly_revenue = sum(tx.total_price for tx in weekly_transactions) or 0
+    weekly_capital = sum(tx.quantity * tx.product.purchase_price for tx in weekly_transactions) or 0
+    weekly_expense = sum(exp.amount for exp in weekly_expenses) or 0
+    weekly_profit = weekly_revenue - weekly_capital - weekly_expense
+
+    # 2. Monthly Calculations (Current Month)
+    monthly_transactions = Transaction.objects.filter(date__year=today.year, date__month=today.month)
+    monthly_expenses = Expense.objects.filter(date__year=today.year, date__month=today.month)
+    
+    monthly_revenue = sum(tx.total_price for tx in monthly_transactions) or 0
+    monthly_capital = sum(tx.quantity * tx.product.purchase_price for tx in monthly_transactions) or 0
+    monthly_expense = sum(exp.amount for exp in monthly_expenses) or 0
+    monthly_profit = monthly_revenue - monthly_capital - monthly_expense
+
+    # 3. Yearly Calculations (Current Year)
+    yearly_transactions = Transaction.objects.filter(date__year=today.year)
+    yearly_expenses = Expense.objects.filter(date__year=today.year)
+    
+    yearly_revenue = sum(tx.total_price for tx in yearly_transactions) or 0
+    yearly_capital = sum(tx.quantity * tx.product.purchase_price for tx in yearly_transactions) or 0
+    yearly_expense = sum(exp.amount for exp in yearly_expenses) or 0
+    yearly_profit = yearly_revenue - yearly_capital - yearly_expense
+
+    context = {
+        'weekly_capital': weekly_capital,
+        'weekly_revenue': weekly_revenue,
+        'weekly_expense': weekly_expense,
+        'weekly_profit': weekly_profit,
+        
+        'monthly_capital': monthly_capital,
+        'monthly_revenue': monthly_revenue,
+        'monthly_expense': monthly_expense,
+        'monthly_profit': monthly_profit,
+        
+        'yearly_capital': yearly_capital,
+        'yearly_revenue': yearly_revenue,
+        'yearly_expense': yearly_expense,
+        'yearly_profit': yearly_profit,
+    }
+
+    return render(request, 'store/home.html', context)
 
 def category_list(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
+        name = request.POST.get('name_category')
         if name:
             Category.objects.create(name=name)
             return redirect('category_list')
