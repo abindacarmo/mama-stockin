@@ -1,0 +1,59 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Business Summary - MamaStockin{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h2 class="text-lg font-bold text-gray-800">Business Summary</h2>
+        <a href="{% url 'store_home' %}" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition">Back to Home</a>
+    </div>
+
+    <!-- Summary Card / Table -->
+    <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-4 shadow-sm">
+        <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Financial Overview</h3>
+        
+        <!-- Summary Table with Dynamic Data -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left text-gray-700">
+                <thead class="bg-gray-100 text-gray-800 uppercase">
+                    <tr>
+                        <th class="py-2 px-2">Period</th>
+                        <th class="py-2 px-2 text-blue-600">Capital</th>
+                        <th class="py-2 px-2 text-emerald-600">Revenue</th>
+                        <th class="py-2 px-2 text-rose-600">Expense</th>
+                        <th class="py-2 px-2 text-pink-600">Profit</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- This Week -->
+                    <tr>
+                        <td class="py-2.5 px-2 font-medium">This Week</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ weekly_capital }}</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ weekly_revenue }}</td>
+                        <td class="py-2.5 px-2 text-rose-600">${{ weekly_expense }}</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ weekly_profit }}</td>
+                    </tr>
+                    <!-- This Month -->
+                    <tr>
+                        <td class="py-2.5 px-2 font-medium">This Month</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ monthly_capital }}</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ monthly_revenue }}</td>
+                        <td class="py-2.5 px-2 text-rose-600">${{ monthly_expense }}</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ monthly_profit }}</td>
+                    </tr>
+                    <!-- This Year -->
+                    <tr>
+                        <td class="py-2.5 px-2 font-medium">This Year</td>
+                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ yearly_capital }}</td>
+                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ yearly_revenue }}</td>
+                        <td class="py-2.5 px-2 text-rose-600">${{ yearly_expense }}</td>
+                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ yearly_profit }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="text-[11px] text-gray-400 text-center italic">Note: Summary is calculated dynamically from real transactions, consignments, and expenses.</p>
+    </div>
+</div>
+{% endblock %}

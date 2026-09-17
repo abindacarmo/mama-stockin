@@ -61,6 +61,58 @@ def home(request):
 
     return render(request, 'store/home.html', context)
 
+def summary_bisnis(request):
+    today = timezone.now().date()
+    
+    # Weekly
+    week_ago = today - timezone.timedelta(days=7)
+    weekly_transactions = Transaction.objects.filter(date__gte=week_ago)
+    weekly_expenses = Expense.objects.filter(date__gte=week_ago)
+    weekly_consignments = Consignment.objects.filter(settlement_date__gte=week_ago, is_settled=True)
+    
+    weekly_revenue = sum(tx.total_price for tx in weekly_transactions) + sum(c.amount_received for c in weekly_consignments) or 0
+    weekly_capital = sum(tx.quantity * tx.product.purchase_price for tx in weekly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in weekly_consignments) or 0
+    weekly_expense = sum(exp.amount for exp in weekly_expenses) or 0
+    weekly_profit = weekly_revenue - weekly_capital - weekly_expense
+
+    # Monthly
+    monthly_transactions = Transaction.objects.filter(date__year=today.year, date__month=today.month)
+    monthly_expenses = Expense.objects.filter(date__year=today.year, date__month=today.month)
+    monthly_consignments = Consignment.objects.filter(settlement_date__year=today.year, settlement_date__month=today.month, is_settled=True)
+    
+    monthly_revenue = sum(tx.total_price for tx in monthly_transactions) + sum(c.amount_received for c in monthly_consignments) or 0
+    monthly_capital = sum(tx.quantity * tx.product.purchase_price for tx in monthly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in monthly_consignments) or 0
+    monthly_expense = sum(exp.amount for exp in monthly_expenses) or 0
+    monthly_profit = monthly_revenue - monthly_capital - monthly_expense
+
+    # Yearly
+    yearly_transactions = Transaction.objects.filter(date__year=today.year)
+    yearly_expenses = Expense.objects.filter(date__year=today.year)
+    yearly_consignments = Consignment.objects.filter(settlement_date__year=today.year, is_settled=True)
+    
+    yearly_revenue = sum(tx.total_price for tx in yearly_transactions) + sum(c.amount_received for c in yearly_consignments) or 0
+    yearly_capital = sum(tx.quantity * tx.product.purchase_price for tx in yearly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in yearly_consignments) or 0
+    yearly_expense = sum(exp.amount for exp in yearly_expenses) or 0
+    yearly_profit = yearly_revenue - yearly_capital - yearly_expense
+
+    context = {
+        'weekly_capital': weekly_capital,
+        'weekly_revenue': weekly_revenue,
+        'weekly_expense': weekly_expense,
+        'weekly_profit': weekly_profit,
+        
+        'monthly_capital': monthly_capital,
+        'monthly_revenue': monthly_revenue,
+        'monthly_expense': monthly_expense,
+        'monthly_profit': monthly_profit,
+        
+        'yearly_capital': yearly_capital,
+        'yearly_revenue': yearly_revenue,
+        'yearly_expense': yearly_expense,
+        'yearly_profit': yearly_profit,
+    }
+    return render(request, 'store/summary_bisnis.html', context)
+
 def category_list(request):
     if request.method == 'POST':
         name = request.POST.get('name')
