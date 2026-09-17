@@ -43,3 +43,23 @@ class Expense(models.Model):
 
     def __str__(self):
         return f"{self.description} - ${self.amount} ({self.date})"
+
+class Consignment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity_dropped = models.IntegerField()
+    drop_off_date = models.DateField(auto_now_add=True)
+    quantity_sold = models.IntegerField(default=0)
+    amount_received = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    settlement_date = models.DateField(null=True, blank=True)
+    is_settled = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # When a new consignment batch is dropped off, reduce product stock
+        if self.pk is None:
+            self.product.stock -= self.quantity_dropped
+            self.product.save()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        status = "Settled" if self.is_settled else "Active"
+        return f"Consignment: {self.product.name} ({self.quantity_dropped} pcs) - {status}"
