@@ -64,13 +64,15 @@
         </div>
     </div>
 
-    <!-- Two New Product Action Buttons as Replacement -->
+    <!-- Two Specific Product Buttons: Pulsa Telemor & Ikan Teri -->
     <div class="grid grid-cols-2 gap-4">
-        <a href="{% url 'product_list' %}" class="bg-pink-600 hover:bg-pink-700 text-white p-3 rounded-xl font-semibold text-xs text-center transition shadow-sm flex items-center justify-center space-x-1">
-            <span>➕ Add New Product</span>
+        <a href="{% url 'product_list' %}" class="bg-pink-50 hover:bg-pink-100 border border-pink-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+            <span class="text-2xl mb-1">📱</span>
+            <span class="font-semibold text-pink-700 text-sm">Pulsa Telemor</span>
         </a>
-        <a href="{% url 'product_list' %}" class="bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-xl font-semibold text-xs text-center transition shadow-sm flex items-center justify-center space-x-1">
-            <span>📋 View All Products</span>
+        <a href="{% url 'consignment_list' %}" class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+            <span class="text-2xl mb-1>🐟</span>
+            <span class="font-semibold text-emerald-700 text-sm">Ikan Teri</span>
         </a>
     </div>
 </div>
