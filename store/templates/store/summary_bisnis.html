@@ -21,43 +21,44 @@
         </div>
     </div>
 
-    <!-- Summary Overview Card without Table -->
+    <!-- Monthly Breakdown Card (January to December for Current Year) -->
     <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-4 shadow-sm">
-        <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Financial Overview for {{ title }}</h3>
+        <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Monthly Income & Expenses ({{ current_year }})</h3>
         
-        <div class="space-y-3">
-            <!-- This Week -->
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
-                <span class="text-xs font-bold text-gray-700">This Week</span>
-                <div class="text-right text-xs space-x-2">
-                    <span class="text-blue-600 font-semibold">Cap: ${{ weekly_capital }}</span>
-                    <span class="text-emerald-600 font-semibold">Rev: ${{ weekly_revenue }}</span>
-                    <span class="text-pink-600 font-bold">Prof: ${{ weekly_profit }}</span>
+        <div class="space-y-2.5">
+            {% for item in months_data %}
+                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 flex justify-between items-center text-xs">
+                    <span class="font-semibold text-gray-700 w-24">{{ item.month }}</span>
+                    <div class="text-right space-x-3">
+                        <span class="text-emerald-600 font-semibold">Income: ${{ item.revenue }}</span>
+                        <span class="text-rose-600 font-semibold">Expense: ${{ item.expense }}</span>
+                    </div>
                 </div>
-            </div>
-
-            <!-- This Month -->
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
-                <span class="text-xs font-bold text-gray-700">This Month</span>
-                <div class="text-right text-xs space-x-2">
-                    <span class="text-blue-600 font-semibold">Cap: ${{ monthly_capital }}</span>
-                    <span class="text-emerald-600 font-semibold">Rev: ${{ monthly_revenue }}</span>
-                    <span class="text-pink-600 font-bold">Prof: ${{ monthly_profit }}</span>
-                </div>
-            </div>
-
-            <!-- This Year -->
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
-                <span class="text-xs font-bold text-gray-700">This Year</span>
-                <div class="text-right text-xs space-x-2">
-                    <span class="text-blue-600 font-semibold">Cap: ${{ yearly_capital }}</span>
-                    <span class="text-emerald-600 font-semibold">Rev: ${{ yearly_revenue }}</span>
-                    <span class="text-pink-600 font-bold">Prof: ${{ yearly_profit }}</span>
-                </div>
-            </div>
+            {% endfor %}
         </div>
+        <p class="text-[11px] text-gray-400 text-center italic">Monthly breakdown from January to December for {{ title }}.</p>
+    </div>
 
-        <p class="text-[11px] text-gray-400 text-center italic">Note: Summary is calculated dynamically for {{ title }}.</p>
+    <!-- Yearly Summary Labels (Dynamically adds per year) -->
+    <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-3 shadow-sm">
+        <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Yearly Totals Summary</h3>
+        <div class="space-y-2.5">
+            {% for ys in yearly_summaries %}
+                <div class="bg-pink-50 border border-pink-100 p-3 rounded-xl flex justify-between items-center text-xs">
+                    <span class="font-bold text-pink-700 text-sm">Year {{ ys.year }}</span>
+                    <div class="text-right space-x-2">
+                        <span class="text-blue-700 font-semibold">Cap: ${{ ys.capital }}</span>
+                        <span class="text-emerald-700 font-semibold">Rev: ${{ ys.revenue }}</span>
+                        <span class="text-pink-700 font-bold">Prof: ${{ ys.profit }}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center text-xs text-gray-400 py-3">
+                    No yearly records yet.
+                </div>
+            {% endfor %}
+        </div>
+        <p class="text-[11px] text-gray-400 text-center italic">New year cards will appear automatically as time progresses.</p>
     </div>
 </div>
 {% endblock %}

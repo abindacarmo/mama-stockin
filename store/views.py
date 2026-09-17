@@ -64,82 +64,86 @@ def home(request):
 def summary_bisnis(request):
     product_type = request.GET.get('type', 'pulsa')
     today = timezone.now().date()
-    week_ago = today - timezone.timedelta(days=7)
+    current_year = today.year
 
     if product_type == 'teri':
         title = "Ikan Teri"
         products_query = Product.objects.filter(name__icontains='teri')
-        weekly_transactions = Transaction.objects.none()
-        weekly_consignments = Consignment.objects.filter(settlement_date__gte=week_ago, is_settled=True, product__name__icontains='teri')
-        
-        monthly_transactions = Transaction.objects.none()
-        monthly_consignments = Consignment.objects.filter(settlement_date__year=today.year, settlement_date__month=today.month, is_settled=True, product__name__icontains='teri')
-        
-        yearly_transactions = Transaction.objects.none()
-        yearly_consignments = Consignment.objects.filter(settlement_date__year=today.year, is_settled=True, product__name__icontains='teri')
-        
         lifetime_consignments = Consignment.objects.filter(product__name__icontains='teri', is_settled=True)
         total_lifetime_capital = sum(c.quantity_sold * c.product.purchase_price for c in lifetime_consignments) or 0
         
-        weekly_expenses = Expense.objects.none()
-        monthly_expenses = Expense.objects.none()
-        yearly_expenses = Expense.objects.none()
+        # Get all distinct years from settlements
+        settlement_years = Consignment.objects.filter(product__name__icontains='teri', is_settled=True).dates('settlement_date', 'year')
+        years_set = {d.year for d in settlement_years}
+        years_set.add(current_year)
+        
+        yearly_summaries = []
+        for yr in sorted(years_set, reverse=True):
+            yr_consignments = Consignment.objects.filter(settlement_date__year=yr, is_settled=True, product__name__icontains='teri')
+            yr_rev = sum(c.amount_received for c in yr_consignments) or 0
+            yr_cap = sum(c.quantity_sold * c.product.purchase_price for c in yr_consignments) or 0
+            yearly_summaries.append({
+                'year': yr,
+                'revenue': yr_rev,
+                'capital': yr_cap,
+                'profit': yr_rev - yr_cap,
+            })
     else:
         title = "Pulsa Telemor"
         products_query = Product.objects.filter(name__icontains='pulsa')
-        weekly_transactions = Transaction.objects.filter(date__gte=week_ago, product__name__icontains='pulsa')
-        weekly_consignments = Consignment.objects.none()
-        
-        monthly_transactions = Transaction.objects.filter(date__year=today.year, date__month=today.month, product__name__icontains='pulsa')
-        monthly_consignments = Consignment.objects.none()
-        
-        yearly_transactions = Transaction.objects.filter(date__year=today.year, product__name__icontains='pulsa')
-        yearly_consignments = Consignment.objects.none()
-        
         lifetime_transactions = Transaction.objects.filter(product__name__icontains='pulsa')
         total_lifetime_capital = sum(tx.quantity * tx.product.purchase_price for tx in lifetime_transactions) or 0
         
-        weekly_expenses = Expense.objects.none()
-        monthly_expenses = Expense.objects.none()
-        yearly_expenses = Expense.objects.none()
+        # Get all distinct years from transactions
+        tx_years = Transaction.objects.filter(product__name__icontains='pulsa').dates('date', 'year')
+        years_set = {d.year for d in tx_years}
+        years_set.add(current_year)
+        
+        yearly_summaries = []
+        for yr in sorted(years_set, reverse=True):
+            yr_transactions = Transaction.objects.filter(date__year=yr, product__name__icontains='pulsa')
+            yr_rev = sum(tx.total_price for tx in yr_transactions) or 0
+            yr_cap = sum(tx.quantity * tx.product.purchase_price for tx in yr_transactions) or 0
+            yearly_summaries.append({
+                'year': yr,
+                'revenue': yr_rev,
+                'capital': yr_cap,
+                'profit': yr_rev - yr_cap,
+            })
 
-    # Current Stock Capital (Stock * purchase_price)
+    # Current Stock Capital
     current_stock_capital = sum(p.stock * p.purchase_price for p in products_query) or 0
 
-    # Calculations
-    weekly_revenue = sum(tx.total_price for tx in weekly_transactions) + sum(c.amount_received for c in weekly_consignments) or 0
-    weekly_capital = sum(tx.quantity * tx.product.purchase_price for tx in weekly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in weekly_consignments) or 0
-    weekly_expense = sum(exp.amount for exp in weekly_expenses) or 0
-    weekly_profit = weekly_revenue - weekly_capital - weekly_expense
+    # Monthly breakdown for current year (January to December)
+    months_data = []
+    month_names = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
 
-    monthly_revenue = sum(tx.total_price for tx in monthly_transactions) + sum(c.amount_received for c in monthly_consignments) or 0
-    monthly_capital = sum(tx.quantity * tx.product.purchase_price for tx in monthly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in monthly_consignments) or 0
-    monthly_expense = sum(exp.amount for exp in monthly_expenses) or 0
-    monthly_profit = monthly_revenue - monthly_capital - monthly_expense
+    for m in range(1, 13):
+        if product_type == 'teri':
+            m_consignments = Consignment.objects.filter(settlement_date__year=current_year, settlement_date__month=m, is_settled=True, product__name__icontains='teri')
+            rev = sum(c.amount_received for c in m_consignments) or 0
+            exp = 0
+        else:
+            m_transactions = Transaction.objects.filter(date__year=current_year, date__month=m, product__name__icontains='pulsa')
+            rev = sum(tx.total_price for tx in m_transactions) or 0
+            exp = 0
 
-    yearly_revenue = sum(tx.total_price for tx in yearly_transactions) + sum(c.amount_received for c in yearly_consignments) or 0
-    yearly_capital = sum(tx.quantity * tx.product.purchase_price for tx in yearly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in yearly_consignments) or 0
-    yearly_expense = sum(exp.amount for exp in yearly_expenses) or 0
-    yearly_profit = yearly_revenue - yearly_capital - yearly_expense
+        months_data.append({
+            'month': month_names[m - 1],
+            'revenue': rev,
+            'expense': exp,
+        })
 
     context = {
         'title': title,
         'current_stock_capital': current_stock_capital,
         'total_lifetime_capital': total_lifetime_capital,
-        'weekly_capital': weekly_capital,
-        'weekly_revenue': weekly_revenue,
-        'weekly_expense': weekly_expense,
-        'weekly_profit': weekly_profit,
-        
-        'monthly_capital': monthly_capital,
-        'monthly_revenue': monthly_revenue,
-        'monthly_expense': monthly_expense,
-        'monthly_profit': monthly_profit,
-        
-        'yearly_capital': yearly_capital,
-        'yearly_revenue': yearly_revenue,
-        'yearly_expense': yearly_expense,
-        'yearly_profit': yearly_profit,
+        'months_data': months_data,
+        'current_year': current_year,
+        'yearly_summaries': yearly_summaries,
     }
     return render(request, 'store/summary_bisnis.html', context)
 
@@ -223,7 +227,7 @@ def consignment_list(request):
                 )
                 return redirect('consignment_list')
                 
-        elif argument_action := action == 'settle':
+        elif action == 'settle':
             consignment_id = request.POST.get('consignment_id')
             quantity_sold = request.POST.get('quantity_sold')
             amount_received = request.POST.get('amount_received')
