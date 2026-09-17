@@ -61,6 +61,92 @@ def home(request):
 
     return render(request, 'store/home.html', context)
 
+def summary_bisnis(request):
+    product_type = request.GET.get('type', 'pulsa')
+    today = timezone.now().date()
+    current_year = today.year
+
+    if product_type == 'teri':
+        title = "Ikan Teri"
+        products_query = Product.objects.filter(name__icontains='teri')
+        lifetime_consignments = Consignment.objects.filter(product__name__icontains='teri', is_settled=True)
+        total_lifetime_capital = sum(c.quantity_sold * c.product.purchase_price for c in lifetime_consignments) or 0
+        
+        # Get all distinct years from settlements
+        settlement_years = Consignment.objects.filter(product__name__icontains='teri', is_settled=True).dates('settlement_date', 'year')
+        years_set = {d.year for d in settlement_years}
+        years_set.add(current_year)
+        
+        yearly_summaries = []
+        for yr in sorted(years_set, reverse=True):
+            yr_consignments = Consignment.objects.filter(settlement_date__year=yr, is_settled=True, product__name__icontains='teri')
+            yr_rev = sum(c.amount_received for c in yr_consignments) or 0
+            yr_cap = sum(c.quantity_sold * c.product.purchase_price for c in yr_consignments) or 0
+            yearly_summaries.append({
+                'year': yr,
+                'revenue': yr_rev,
+                'capital': yr_cap,
+                'profit': yr_rev - yr_cap,
+            })
+    else:
+        title = "Pulsa Telemor"
+        products_query = Product.objects.filter(name__icontains='pulsa')
+        lifetime_transactions = Transaction.objects.filter(product__name__icontains='pulsa')
+        total_lifetime_capital = sum(tx.quantity * tx.product.purchase_price for tx in lifetime_transactions) or 0
+        
+        # Get all distinct years from transactions
+        tx_years = Transaction.objects.filter(product__name__icontains='pulsa').dates('date', 'year')
+        years_set = {d.year for d in tx_years}
+        years_set.add(current_year)
+        
+        yearly_summaries = []
+        for yr in sorted(years_set, reverse=True):
+            yr_transactions = Transaction.objects.filter(date__year=yr, product__name__icontains='pulsa')
+            yr_rev = sum(tx.total_price for tx in yr_transactions) or 0
+            yr_cap = sum(tx.quantity * tx.product.purchase_price for tx in yr_transactions) or 0
+            yearly_summaries.append({
+                'year': yr,
+                'revenue': yr_rev,
+                'capital': yr_cap,
+                'profit': yr_rev - yr_cap,
+            })
+
+    # Current Stock Capital
+    current_stock_capital = sum(p.stock * p.purchase_price for p in products_query) or 0
+
+    # Monthly breakdown for current year (January to December)
+    months_data = []
+    month_names = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
+
+    for m in range(1, 13):
+        if product_type == 'teri':
+            m_consignments = Consignment.objects.filter(settlement_date__year=current_year, settlement_date__month=m, is_settled=True, product__name__icontains='teri')
+            rev = sum(c.amount_received for c in m_consignments) or 0
+            exp = 0
+        else:
+            m_transactions = Transaction.objects.filter(date__year=current_year, date__month=m, product__name__icontains='pulsa')
+            rev = sum(tx.total_price for tx in m_transactions) or 0
+            exp = 0
+
+        months_data.append({
+            'month': month_names[m - 1],
+            'revenue': rev,
+            'expense': exp,
+        })
+
+    context = {
+        'title': title,
+        'current_stock_capital': current_stock_capital,
+        'total_lifetime_capital': total_lifetime_capital,
+        'months_data': months_data,
+        'current_year': current_year,
+        'yearly_summaries': yearly_summaries,
+    }
+    return render(request, 'store/summary_bisnis.html', context)
+
 def category_list(request):
     if request.method == 'POST':
         name = request.POST.get('name')
