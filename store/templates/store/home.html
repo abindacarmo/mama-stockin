@@ -64,16 +64,16 @@
         </div>
     </div>
 
-    <!-- Two Specific Product Buttons linked to Summary Bisnis -->
+    <!-- Two Specific Product Buttons with Query Parameters for Filtering -->
     <div class="grid grid-cols-2 gap-4">
-        <a href="{% url 'summary_bisnis' %}" class="bg-pink-50 hover:bg-pink-100 border border-pink-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+        <a href="{% url 'summary_bisnis' %}?type=pulsa" class="bg-pink-50 hover:bg-pink-100 border border-pink-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
             <span class="text-2xl mb-1">📱</span>
             <span class="font-semibold text-pink-700 text-sm">Pulsa Telemor</span>
         </a>
-        <a href="{% url 'summary_bisnis' %}" class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
+        <a href="{% url 'summary_bisnis' %}?type=teri" class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 p-4 rounded-xl flex flex-col items-center justify-center text-center transition shadow-sm">
             <span class="text-2xl mb-1">🐟</span>
             <span class="font-semibold text-emerald-700 text-sm">Ikan Teri</span>
         </a>
     </div>
 </div>
-{% endblock %>
+{% endblock %}

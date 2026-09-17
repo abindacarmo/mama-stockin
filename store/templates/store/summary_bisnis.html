@@ -1,59 +1,63 @@
 {% extends 'store/base.html' %}
 
-{% block title %}Business Summary - MamaStockin{% endblock %}
+{% block title %}{{ title }} - MamaStockin{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
     <div class="flex justify-between items-center">
-        <h2 class="text-lg font-bold text-gray-800">Business Summary</h2>
+        <h2 class="text-lg font-bold text-gray-800">{{ title }}</h2>
         <a href="{% url 'store_home' %}" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition">Back to Home</a>
     </div>
 
-    <!-- Summary Card / Table -->
-    <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-4 shadow-sm">
-        <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Financial Overview</h3>
-        
-        <!-- Summary Table with Dynamic Data -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left text-gray-700">
-                <thead class="bg-gray-100 text-gray-800 uppercase">
-                    <tr>
-                        <th class="py-2 px-2">Period</th>
-                        <th class="py-2 px-2 text-blue-600">Capital</th>
-                        <th class="py-2 px-2 text-emerald-600">Revenue</th>
-                        <th class="py-2 px-2 text-rose-600">Expense</th>
-                        <th class="py-2 px-2 text-pink-600">Profit</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    <!-- This Week -->
-                    <tr>
-                        <td class="py-2.5 px-2 font-medium">This Week</td>
-                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ weekly_capital }}</td>
-                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ weekly_revenue }}</td>
-                        <td class="py-2.5 px-2 text-rose-600">${{ weekly_expense }}</td>
-                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ weekly_profit }}</td>
-                    </tr>
-                    <!-- This Month -->
-                    <tr>
-                        <td class="py-2.5 px-2 font-medium">This Month</td>
-                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ monthly_capital }}</td>
-                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ monthly_revenue }}</td>
-                        <td class="py-2.5 px-2 text-rose-600">${{ monthly_expense }}</td>
-                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ monthly_profit }}</td>
-                    </tr>
-                    <!-- This Year -->
-                    <tr>
-                        <td class="py-2.5 px-2 font-medium">This Year</td>
-                        <td class="py-2.5 px-2 text-blue-600 font-semibold">${{ yearly_capital }}</td>
-                        <td class="py-2.5 px-2 text-emerald-600 font-semibold">${{ yearly_revenue }}</td>
-                        <td class="py-2.5 px-2 text-rose-600">${{ yearly_expense }}</td>
-                        <td class="py-2.5 px-2 text-pink-600 font-bold">${{ yearly_profit }}</td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Two Top Labels: Current Stock Capital & Total Lifetime Capital -->
+    <div class="grid grid-cols-2 gap-3">
+        <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl text-center shadow-sm">
+            <span class="text-[10px] uppercase font-bold text-blue-600 block mb-0.5">Current Stock Capital</span>
+            <span class="text-sm font-extrabold text-blue-800">${{ current_stock_capital }}</span>
         </div>
-        <p class="text-[11px] text-gray-400 text-center italic">Note: Summary is calculated dynamically from real transactions, consignments, and expenses.</p>
+        <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl text-center shadow-sm">
+            <span class="text-[10px] uppercase font-bold text-indigo-600 block mb-0.5">Total Lifetime Capital</span>
+            <span class="text-sm font-extrabold text-indigo-800">${{ total_lifetime_capital }}</span>
+        </div>
+    </div>
+
+    <!-- Summary Overview Card without Table -->
+    <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-4 shadow-sm">
+        <h3 class="text-sm font-bold text-gray-800 text-center border-b pb-2">Financial Overview for {{ title }}</h3>
+        
+        <div class="space-y-3">
+            <!-- This Week -->
+            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
+                <span class="text-xs font-bold text-gray-700">This Week</span>
+                <div class="text-right text-xs space-x-2">
+                    <span class="text-blue-600 font-semibold">Cap: ${{ weekly_capital }}</span>
+                    <span class="text-emerald-600 font-semibold">Rev: ${{ weekly_revenue }}</span>
+                    <span class="text-pink-600 font-bold">Prof: ${{ weekly_profit }}</span>
+                </div>
+            </div>
+
+            <!-- This Month -->
+            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
+                <span class="text-xs font-bold text-gray-700">This Month</span>
+                <div class="text-right text-xs space-x-2">
+                    <span class="text-blue-600 font-semibold">Cap: ${{ monthly_capital }}</span>
+                    <span class="text-emerald-600 font-semibold">Rev: ${{ monthly_revenue }}</span>
+                    <span class="text-pink-600 font-bold">Prof: ${{ monthly_profit }}</span>
+                </div>
+            </div>
+
+            <!-- This Year -->
+            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex justify-between items-center">
+                <span class="text-xs font-bold text-gray-700">This Year</span>
+                <div class="text-right text-xs space-x-2">
+                    <span class="text-blue-600 font-semibold">Cap: ${{ yearly_capital }}</span>
+                    <span class="text-emerald-600 font-semibold">Rev: ${{ yearly_revenue }}</span>
+                    <span class="text-pink-600 font-bold">Prof: ${{ yearly_profit }}</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-[11px] text-gray-400 text-center italic">Note: Summary is calculated dynamically for {{ title }}.</p>
     </div>
 </div>
 {% endblock %}

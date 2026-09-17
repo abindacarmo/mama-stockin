@@ -62,40 +62,70 @@ def home(request):
     return render(request, 'store/home.html', context)
 
 def summary_bisnis(request):
+    product_type = request.GET.get('type', 'pulsa')
     today = timezone.now().date()
-    
-    # Weekly
     week_ago = today - timezone.timedelta(days=7)
-    weekly_transactions = Transaction.objects.filter(date__gte=week_ago)
-    weekly_expenses = Expense.objects.filter(date__gte=week_ago)
-    weekly_consignments = Consignment.objects.filter(settlement_date__gte=week_ago, is_settled=True)
-    
+
+    if product_type == 'teri':
+        title = "Ikan Teri"
+        products_query = Product.objects.filter(name__icontains='teri')
+        weekly_transactions = Transaction.objects.none()
+        weekly_consignments = Consignment.objects.filter(settlement_date__gte=week_ago, is_settled=True, product__name__icontains='teri')
+        
+        monthly_transactions = Transaction.objects.none()
+        monthly_consignments = Consignment.objects.filter(settlement_date__year=today.year, settlement_date__month=today.month, is_settled=True, product__name__icontains='teri')
+        
+        yearly_transactions = Transaction.objects.none()
+        yearly_consignments = Consignment.objects.filter(settlement_date__year=today.year, is_settled=True, product__name__icontains='teri')
+        
+        lifetime_consignments = Consignment.objects.filter(product__name__icontains='teri', is_settled=True)
+        total_lifetime_capital = sum(c.quantity_sold * c.product.purchase_price for c in lifetime_consignments) or 0
+        
+        weekly_expenses = Expense.objects.none()
+        monthly_expenses = Expense.objects.none()
+        yearly_expenses = Expense.objects.none()
+    else:
+        title = "Pulsa Telemor"
+        products_query = Product.objects.filter(name__icontains='pulsa')
+        weekly_transactions = Transaction.objects.filter(date__gte=week_ago, product__name__icontains='pulsa')
+        weekly_consignments = Consignment.objects.none()
+        
+        monthly_transactions = Transaction.objects.filter(date__year=today.year, date__month=today.month, product__name__icontains='pulsa')
+        monthly_consignments = Consignment.objects.none()
+        
+        yearly_transactions = Transaction.objects.filter(date__year=today.year, product__name__icontains='pulsa')
+        yearly_consignments = Consignment.objects.none()
+        
+        lifetime_transactions = Transaction.objects.filter(product__name__icontains='pulsa')
+        total_lifetime_capital = sum(tx.quantity * tx.product.purchase_price for tx in lifetime_transactions) or 0
+        
+        weekly_expenses = Expense.objects.none()
+        monthly_expenses = Expense.objects.none()
+        yearly_expenses = Expense.objects.none()
+
+    # Current Stock Capital (Stock * purchase_price)
+    current_stock_capital = sum(p.stock * p.purchase_price for p in products_query) or 0
+
+    # Calculations
     weekly_revenue = sum(tx.total_price for tx in weekly_transactions) + sum(c.amount_received for c in weekly_consignments) or 0
     weekly_capital = sum(tx.quantity * tx.product.purchase_price for tx in weekly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in weekly_consignments) or 0
     weekly_expense = sum(exp.amount for exp in weekly_expenses) or 0
     weekly_profit = weekly_revenue - weekly_capital - weekly_expense
 
-    # Monthly
-    monthly_transactions = Transaction.objects.filter(date__year=today.year, date__month=today.month)
-    monthly_expenses = Expense.objects.filter(date__year=today.year, date__month=today.month)
-    monthly_consignments = Consignment.objects.filter(settlement_date__year=today.year, settlement_date__month=today.month, is_settled=True)
-    
     monthly_revenue = sum(tx.total_price for tx in monthly_transactions) + sum(c.amount_received for c in monthly_consignments) or 0
     monthly_capital = sum(tx.quantity * tx.product.purchase_price for tx in monthly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in monthly_consignments) or 0
     monthly_expense = sum(exp.amount for exp in monthly_expenses) or 0
     monthly_profit = monthly_revenue - monthly_capital - monthly_expense
 
-    # Yearly
-    yearly_transactions = Transaction.objects.filter(date__year=today.year)
-    yearly_expenses = Expense.objects.filter(date__year=today.year)
-    yearly_consignments = Consignment.objects.filter(settlement_date__year=today.year, is_settled=True)
-    
     yearly_revenue = sum(tx.total_price for tx in yearly_transactions) + sum(c.amount_received for c in yearly_consignments) or 0
     yearly_capital = sum(tx.quantity * tx.product.purchase_price for tx in yearly_transactions) + sum(c.quantity_sold * c.product.purchase_price for c in yearly_consignments) or 0
     yearly_expense = sum(exp.amount for exp in yearly_expenses) or 0
     yearly_profit = yearly_revenue - yearly_capital - yearly_expense
 
     context = {
+        'title': title,
+        'current_stock_capital': current_stock_capital,
+        'total_lifetime_capital': total_lifetime_capital,
         'weekly_capital': weekly_capital,
         'weekly_revenue': weekly_revenue,
         'weekly_expense': weekly_expense,
@@ -193,7 +223,7 @@ def consignment_list(request):
                 )
                 return redirect('consignment_list')
                 
-        elif action == 'settle':
+        elif argument_action := action == 'settle':
             consignment_id = request.POST.get('consignment_id')
             quantity_sold = request.POST.get('quantity_sold')
             amount_received = request.POST.get('amount_received')
