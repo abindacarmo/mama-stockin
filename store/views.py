@@ -80,13 +80,16 @@ def summary_bisnis(request):
         yearly_summaries = []
         for yr in sorted(years_set, reverse=True):
             yr_consignments = Consignment.objects.filter(settlement_date__year=yr, is_settled=True, product__name__icontains='teri')
+            yr_expenses = Expense.objects.filter(date__year=yr, product__name__icontains='teri')
             yr_rev = sum(c.amount_received for c in yr_consignments) or 0
             yr_cap = sum(c.quantity_sold * c.product.purchase_price for c in yr_consignments) or 0
+            yr_exp = sum(exp.amount for exp in yr_expenses) or 0
             yearly_summaries.append({
                 'year': yr,
                 'revenue': yr_rev,
                 'capital': yr_cap,
-                'profit': yr_rev - yr_cap,
+                'expense': yr_exp,
+                'profit': yr_rev - yr_cap - yr_exp,
             })
     else:
         title = "Pulsa Telemor"
@@ -102,13 +105,16 @@ def summary_bisnis(request):
         yearly_summaries = []
         for yr in sorted(years_set, reverse=True):
             yr_transactions = Transaction.objects.filter(date__year=yr, product__name__icontains='pulsa')
+            yr_expenses = Expense.objects.filter(date__year=yr, product__name__icontains='pulsa')
             yr_rev = sum(tx.total_price for tx in yr_transactions) or 0
             yr_cap = sum(tx.quantity * tx.product.purchase_price for tx in yr_transactions) or 0
+            yr_exp = sum(exp.amount for exp in yr_expenses) or 0
             yearly_summaries.append({
                 'year': yr,
                 'revenue': yr_rev,
                 'capital': yr_cap,
-                'profit': yr_rev - yr_cap,
+                'expense': yr_exp,
+                'profit': yr_rev - yr_cap - yr_exp,
             })
 
     # Current Stock Capital
@@ -124,12 +130,14 @@ def summary_bisnis(request):
     for m in range(1, 13):
         if product_type == 'teri':
             m_consignments = Consignment.objects.filter(settlement_date__year=current_year, settlement_date__month=m, is_settled=True, product__name__icontains='teri')
+            m_expenses = Expense.objects.filter(date__year=current_year, date__month=m, product__name__icontains='teri')
             rev = sum(c.amount_received for c in m_consignments) or 0
-            exp = 0
+            exp = sum(exp.amount for exp in m_expenses) or 0
         else:
             m_transactions = Transaction.objects.filter(date__year=current_year, date__month=m, product__name__icontains='pulsa')
+            m_expenses = Expense.objects.filter(date__year=current_year, date__month=m, product__name__icontains='pulsa')
             rev = sum(tx.total_price for tx in m_transactions) or 0
-            exp = 0
+            exp = sum(exp.amount for exp in m_expenses) or 0
 
         months_data.append({
             'month': month_names[m - 1],
@@ -199,18 +207,22 @@ def transaction_list(request):
 
 def expense_list(request):
     if request.method == 'POST':
+        product_id = request.POST.get('product_id')
         description = request.POST.get('description')
         amount = request.POST.get('amount')
 
         if description and amount:
+            product = Product.objects.get(id=product_id) if product_id else None
             Expense.objects.create(
+                product=product,
                 description=description,
                 amount=amount
             )
             return redirect('expense_list')
 
+    products = Product.objects.all()
     expenses = Expense.objects.all().order_by('-date')
-    return render(request, 'store/expense_list.html', {'expenses': expenses})
+    return render(request, 'store/expense_list.html', {'products': products, 'expenses': expenses})
 
 def consignment_list(request):
     if request.method == 'POST':

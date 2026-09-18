@@ -37,12 +37,14 @@ class Transaction(models.Model):
         return f"Sale: {self.quantity}x {self.product.name} on {self.date}"
 
 class Expense(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.description} - ${self.amount} ({self.date})"
+        prod_name = self.product.name if self.product else "General"
+        return f"[{prod_name}] {self.description} - ${self.amount} ({self.date})"
 
 class Consignment(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
