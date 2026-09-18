@@ -15,6 +15,15 @@
         <form method="POST" class="space-y-3">
             {% csrf_token %}
             <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Related Product (Optional)</label>
+                <select name="product_id" class="w-full text-sm border border-gray-300 rounded-lg p-2 bg-white text-gray-700">
+                    <option value="">-- General Expense (No specific product) --</option>
+                    {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Description</label>
                 <input type="text" name="description" required placeholder="e.g. Transport or packaging" class="w-full text-sm border border-gray-300 rounded-lg p-2 bg-white">
             </div>
@@ -33,7 +42,10 @@
             <div class="bg-white border border-gray-200 p-3 rounded-lg flex justify-between items-center shadow-sm">
                 <div>
                     <h4 class="font-semibold text-gray-800 text-sm">{{ exp.description }}</h4>
-                    <p class="text-xs text-gray-500">Date: {{ exp.date }}</p>
+                    <p class="text-xs text-gray-500">
+                        {% if exp.product %}Product: <span class="text-pink-600 font-medium">{{ exp.product.name }}</span> | {% endif %}
+                        Date: {{ exp.date }}
+                    </p>
                 </div>
                 <div class="text-right">
                     <span class="text-sm font-bold text-rose-600">${{ exp.amount }}</span>
