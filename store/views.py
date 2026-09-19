@@ -156,37 +156,80 @@ def summary_bisnis(request):
     return render(request, 'store/summary_bisnis.html', context)
 
 def category_list(request):
+    action = request.POST.get('action')
     if request.method == 'POST':
-        name = request.POST.get('name')
-        if name:
-            Category.objects.create(name=name)
-            return redirect('category_list')
+        if action == 'create':
+            name = request.POST.get('name')
+            if name:
+                Category.objects.create(name=name)
+                return redirect('category_list')
+        elif action == 'update':
+            category_id = request.POST.get('category_id')
+            name = request.POST.get('name')
+            if category_id and name:
+                cat = Category.objects.get(id=category_id)
+                cat.name = name
+                cat.save()
+                return redirect('category_list')
+        elif action == 'delete':
+            category_id = request.POST.get('category_id')
+            if category_id:
+                Category.objects.filter(id=category_id).delete()
+                return redirect('category_list')
 
+    edit_id = request.GET.get('edit')
+    edit_category = Category.objects.get(id=edit_id) if edit_id else None
     categories = Category.objects.all()
-    return render(request, 'store/category_list.html', {'categories': categories})
+    return render(request, 'store/category_list.html', {'categories': categories, 'edit_category': edit_category})
 
 def product_list(request):
+    action = request.POST.get('action')
     if request.method == 'POST':
-        name = request.POST.get('name')
-        category_id = request.POST.get('category_id')
-        purchase_price = request.POST.get('purchase_price')
-        selling_price = request.POST.get('selling_price')
-        stock = request.POST.get('stock')
+        if action == 'create':
+            name = request.POST.get('name')
+            category_id = request.POST.get('category_id')
+            purchase_price = request.POST.get('purchase_price')
+            selling_price = request.POST.get('selling_price')
+            stock = request.POST.get('stock')
 
-        if name and category_id and purchase_price and selling_price:
-            category = Category.objects.get(id=category_id)
-            Product.objects.create(
-                name=name,
-                category=category,
-                purchase_price=purchase_price,
-                selling_price=selling_price,
-                stock=stock or 0
-            )
-            return redirect('product_list')
+            if name and category_id and purchase_price and selling_price:
+                category = Category.objects.get(id=category_id)
+                Product.objects.create(
+                    name=name,
+                    category=category,
+                    purchase_price=purchase_price,
+                    selling_price=selling_price,
+                    stock=stock or 0
+                )
+                return redirect('product_list')
+        elif action == 'update':
+            product_id = request.POST.get('product_id')
+            name = request.POST.get('name')
+            category_id = request.POST.get('category_id')
+            purchase_price = request.POST.get('purchase_price')
+            selling_price = request.POST.get('selling_price')
+            stock = request.POST.get('stock')
 
+            if product_id and name and category_id and purchase_price and selling_price:
+                prod = Product.objects.get(id=product_id)
+                prod.name = name
+                prod.category = Category.objects.get(id=category_id)
+                prod.purchase_price = purchase_price
+                prod.selling_price = selling_price
+                prod.stock = stock or 0
+                prod.save()
+                return redirect('product_list')
+        elif action == 'delete':
+            product_id = request.POST.get('product_id')
+            if product_id:
+                Product.objects.filter(id=product_id).delete()
+                return redirect('product_list')
+
+    edit_id = request.GET.get('edit')
+    edit_product = Product.objects.get(id=edit_id) if edit_id else None
     products = Product.objects.all()
     categories = Category.objects.all()
-    return render(request, 'store/product_list.html', {'products': products, 'categories': categories})
+    return render(request, 'store/product_list.html', {'products': products, 'categories': categories, 'edit_product': edit_product})
 
 def transaction_list(request):
     if request.method == 'POST':
